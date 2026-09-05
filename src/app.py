@@ -4,7 +4,9 @@ import sys
 from uuid import uuid4
 
 import streamlit as st
+import dotenv 
 
+dotenv.load_dotenv()
 
 USERS_FILE = Path(__file__).with_name("users.txt")
 SRC_DIR = Path(__file__).with_name("src")

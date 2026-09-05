@@ -56,9 +56,9 @@ def addDocsToVectorStore(  docs: List[Document]):
        
 
         if os.path.exists(index_path):
-            print(f'Updating existing FAISS')
             vectorestore = FAISS.load_local(persist_dir, embedding_model, allow_dangerous_deserialization=True)
             if docs:
+                print(f'Updating existing FAISS')
                 vectorestore.add_documents(docs)
             else:
                 print(f'No new documents to add to the existing FAISS store.')
