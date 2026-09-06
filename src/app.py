@@ -118,7 +118,7 @@ def get_message_text(message):
 
 
 def show_chat_workspace(username):
-	from modules.chatMemory import get_session_message_history
+	from modules.chatMemory import delete_session_memory, get_session_message_history
 
 	sessions = get_chat_sessions(username)
 	selected_id = st.session_state.get(f"active_chat_{username}", sessions[0]["id"])
@@ -141,10 +141,20 @@ def show_chat_workspace(username):
 			options=list(labels),
 			format_func=labels.get,
 			index=list(labels).index(selected_session["id"]),
-			key=f"chat_selector_{username}",
+			key=f"chat_selector_{username}_{selected_session['id']}",
 		)
 		if active_id != selected_session["id"]:
 			st.session_state[f"active_chat_{username}"] = active_id
+			st.rerun()
+
+		if st.button("Delete chat", icon=":material/delete:"):
+			deleted_id = selected_session["id"]
+			sessions[:] = [session for session in sessions if session["id"] != deleted_id]
+			delete_session_memory(deleted_id)
+
+			if not sessions:
+				sessions.append(create_chat_session(username, 0))
+			st.session_state[f"active_chat_{username}"] = sessions[0]["id"]
 			st.rerun()
 
 	st.header(selected_session["name"])

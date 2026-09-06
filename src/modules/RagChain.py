@@ -58,7 +58,6 @@ def build_chain():
     def combine_docs(docs)->str:
         if not docs:
             return "No relevant documents retrieved."
-        print(f"Generated context is {docs}")
         return "\n\n".join(doc[0].page_content for doc in docs)
 
     rag_chain=(RunnableParallel(

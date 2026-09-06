@@ -17,6 +17,11 @@ def get_session_message_history(session_id: str):
     return SESSION_MESSAGE_HISTORY[session_id]
 
 
+def delete_session_memory(session_id: str):
+    SESSION_MESSAGE_HISTORY.pop(session_id, None)
+    SESSION_SUMMARY_MEMORY.pop(session_id, None)
+
+
 def getSessionSummaryMemory(session_id: str):
     if session_id not in SESSION_SUMMARY_MEMORY:
         providerSettings = configUtil.getMemoryProviderConfig()
@@ -82,7 +87,6 @@ def llm_chain_with_memory(chain,  enabled:bool = True, recent_k:int = 2):
         existing_summary =summary_memory.load_memory_variables({}).get("summary", "")
         new_summary = summary_memory.predict_new_summary(messages, existing_summary)
         summary_memory._buffer = new_summary
-        summary_memory.save_context({"input": user_input}, {"output": ai_output})
 
         return response
     
