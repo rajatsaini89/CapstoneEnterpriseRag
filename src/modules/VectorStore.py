@@ -1,5 +1,6 @@
 
 import os
+from pathlib import Path
 from typing import List, Optional
 
 from langchain_community.vectorstores import Chroma, FAISS
@@ -17,7 +18,7 @@ config = ConfigUtility()
 
 store_type = config.getVectorStoreType().lower()
 provider = config.getEmbeddingProvider().lower()
-persist_dir = os.path.join(os.getcwd(), "vectorestore",f"{provider}_{store_type}_index")
+persist_dir = os.path.join(Path(__file__).parent.parent, "vectorestore",f"{provider}_{store_type}_index")
 index_path =os.path.join(persist_dir, "index.faiss")
 metadata_path =os.path.join(persist_dir, "index.pkl")
 
@@ -49,7 +50,7 @@ def addDocsToVectorStore(  docs: List[Document]):
     embedding_model = get_embeddings_model(provider)
 
     if store_type == "faiss":
-        persist_dir = os.path.join(os.getcwd(), "vectorestore",f"{provider}_{store_type}_index")
+        
         print(f'Using persist dir: {persist_dir} for vectore store')
         os.makedirs(persist_dir, exist_ok=True)
 
@@ -75,7 +76,6 @@ def addDocsToVectorStore(  docs: List[Document]):
 
 def __getVectorStore():
     embedding_model = get_embeddings_model(provider)
-    
     if os.path.exists(index_path):
         print(f'Updating existing FAISS')
         vectorestore = FAISS.load_local(persist_dir, embedding_model, allow_dangerous_deserialization=True)
@@ -104,6 +104,7 @@ def get_retriever():
             llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
         else:
             raise ValueError(f"Unsupported LLM provider for multi-query retriever: {llmProvider}")
+        print(f"Using LLM provider: {llmProvider} for multi-query retriever")
         return MultiQueryRetriever.from_llm(
             llm=llm,
             retriever=vectorstore.as_retriever(search_kwargs={"k": retConfig.top_k})

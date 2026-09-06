@@ -4,7 +4,6 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.schema.runnable import RunnableLambda, RunnableParallel
 from modules.chatMemory import getMemorySummary, getRecentContext
 from utils.ConfigUtility import ConfigUtility 
-from modules.VectorStore import get_retriever as faiss_retriever
 from modules.HybridRetriever import retrieve_documents
 
 
@@ -30,9 +29,9 @@ def build_chain():
        2. The most recent few question-answer turns for short-term context.
        
       You will also be provided with relvant chunks for documents.
-      Use this information to generate a concise and accurate response to the user's question with following constraints
+      Use this information to generate a concise and accurate response to the user's question with following constraints, answers should be in a professional and human tone, and should be concise and accurate.
       Constraints:
-      You are to strctly allowed to answer questions based on the provided information as part ot retrived context.
+      You are to strictly allowed to answer questions based on the provided information as part of retrived context.
        If the retrieved context do not have enough information inform the user about lack of sufficient information.
       """
 

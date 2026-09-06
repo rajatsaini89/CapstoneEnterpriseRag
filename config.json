@@ -10,7 +10,7 @@
     "chunk_overlap": 75,
     "chunk_top_k": 2,
     "retriver": {
-        "type": "base",
+        "type": "multi_query",    
         "top_k": 5,
         "score_threshold": 0.5,
         "use_score_threshold": false,

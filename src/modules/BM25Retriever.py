@@ -37,8 +37,8 @@ class BM25Retriever:
         
 
     def get_top_k(self, query:str):
-
         bm25_config = configUtility.getBM25Config()
+        print(f"Retrieving top BM25 matches {bm25_config.top_k} documents for query: {query}")
         query_tokens = simple_tokenizer(query)
         doc_scores = self.bm25.get_scores(query_tokens)
 

@@ -1,12 +1,13 @@
 import os
-
+from pathlib import Path
 from langchain_core.documents import Document
 import pypdf
 import docx
 
 def load_all_docs(folder_path: str) -> list[Document]:
+    print(f"Loading documents from folder: {folder_path}")
     docs = []
-
+    
     for file in os.listdir(folder_path):
         path = os.path.join(folder_path, file)
 

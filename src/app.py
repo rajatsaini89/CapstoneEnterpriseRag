@@ -9,13 +9,14 @@ import dotenv
 dotenv.load_dotenv()
 
 USERS_FILE = Path(__file__).with_name("users.txt")
-SRC_DIR = Path(__file__).with_name("src")
+SRC_DIR = Path(__file__)
 if str(SRC_DIR) not in sys.path:
 	sys.path.insert(0, str(SRC_DIR))
 
 
 def load_users():
 	"""Load users from username|password|role records."""
+	
 	users = {}
 
 	if not USERS_FILE.exists():
@@ -162,6 +163,7 @@ def show_chat_workspace(username):
 		with st.chat_message("assistant"):
 			with st.spinner("Thinking..."):
 				try:
+					print(f"Invoking chat chain with question: {question}")
 					response = get_chat_chain().invoke(
 						{"question": question},
 						config={"configurable": {"session_id": selected_session["id"]}},
