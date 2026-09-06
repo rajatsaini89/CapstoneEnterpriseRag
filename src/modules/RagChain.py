@@ -30,6 +30,15 @@ def build_chain():
        
       You will also be provided with relvant chunks for documents.
       Use this information to generate a concise and accurate response to the user's question with following constraints, answers should be in a professional and human tone, and should be concise and accurate.
+      The chunks are shared along with file names in format
+      FILENAME->[<file_name1>]::: CONTENT-> [<content1>] 
+      FILENAME->[<file_name2>]::: CONTENT-> [<content2>]
+      
+      Use the file name to add citation at the end of the answer in new line. Disregard any chunks that are not relevant to the user question. If the user question is not related to the documents, do not use any of the document chunks in your answer as well as citation. If the user question is not related to the documents, do not use any of the document chunks in your answer as well as citation.  
+      Beautify the response for better readability.
+      Sources should be cited in the format: "Sources: new line <file_name>" at the end of the answer. If multiple sources are used, separate them with new lines.
+
+      
       Constraints:
       You are to strictly allowed to answer questions based on the provided information as part of retrived context.
        If the retrieved context do not have enough information inform the user about lack of sufficient information.
@@ -52,13 +61,13 @@ def build_chain():
     {question}
 
     If the user asks to summarize or refer to earlier parts of the conversation, rely primarily on the chat history and memory summary.
-    Otherwise, combine retrieved context and memories to answer effectively.
+    Otherwise, combine retrieved context and memories to answer effectively. 
     """)
 
     def combine_docs(docs)->str:
         if not docs:
             return "No relevant documents retrieved."
-        return "\n\n".join(doc[0].page_content for doc in docs)
+        return "\n\n".join(F' FILENAME->[{doc[0].metadata["FileName"].split("\\")[-1]}]::: CONTENT-> [{doc[0].page_content}] ' for doc in docs)
 
     rag_chain=(RunnableParallel(
         {

@@ -1,0 +1,12 @@
+.env
+.venv
+.agents
+.claude
+
+__pycache__/
+*.py[cod]
+.git/
+.gitignore
+Dockerfile
+docker-compose*.yml
+docker-compose*.yaml
