@@ -211,7 +211,23 @@ def get_message_text(message):
 			item.get("text", str(item)) if isinstance(item, dict) else str(item)
 			for item in content
 		)
+	if isinstance(content, dict) and "answer" in content:
+		return str(content["answer"])
 	return str(content)
+
+
+def get_structured_response_field(response, field, default=None):
+	if isinstance(response, dict):
+		return response.get(field, default)
+	return getattr(response, field, default)
+
+
+def show_response_sources(response):
+	sources = get_structured_response_field(response, "sources", []) or []
+	if sources:
+		with st.expander("Sources"):
+			for source in sources:
+				st.markdown(f"- {source}")
 
 
 def show_chat_workspace(username):
@@ -276,6 +292,7 @@ def show_chat_workspace(username):
 						config={"configurable": {"session_id": selected_session["id"]}},
 					)
 					st.markdown(get_message_text(response))
+					show_response_sources(response)
 					st.rerun()
 				except Exception as error:
 					st.error(f"Unable to get a response: {error}")

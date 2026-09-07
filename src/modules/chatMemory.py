@@ -60,6 +60,7 @@ def update_memory(session_id: str, user_input: str, ai_output: str):
 
     
 
+
 def llm_chain_with_memory(chain,  enabled:bool = True, recent_k:int = 2):
     if not enabled:
         print("Memory is disabled for this chain.")
@@ -77,12 +78,7 @@ def llm_chain_with_memory(chain,  enabled:bool = True, recent_k:int = 2):
         
         response = chain.invoke({"question":f"{input_data.get('question')}?",
                         "session_id": config.get("configurable", {}).get("session_id")}               )
-        user_input = input_data.get("question")
-        ai_output = getattr(response, "content",str(response))
-
-
-        # update_memory(session_id, user_input, ai_output)
-
+       
         messages = summary_memory.chat_memory.messages
         existing_summary =summary_memory.load_memory_variables({}).get("summary", "")
         new_summary = summary_memory.predict_new_summary(messages, existing_summary)
@@ -96,6 +92,6 @@ def llm_chain_with_memory(chain,  enabled:bool = True, recent_k:int = 2):
         runnable_with_summary,
         get_session_history=lambda config: get_session_message_history(config),
         input_messages_key="question",
-        output_messages_key=None,
+        output_messages_key="answer",
         history_messages_key="history"
     )
