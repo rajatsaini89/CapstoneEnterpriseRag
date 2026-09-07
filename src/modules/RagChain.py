@@ -2,6 +2,7 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.schema.runnable import RunnableLambda, RunnableParallel
+from models.llmOutput import LLMOutput
 from modules.chatMemory import getMemorySummary, getRecentContext
 from utils.ConfigUtility import ConfigUtility 
 from modules.HybridRetriever import retrieve_documents
@@ -34,10 +35,8 @@ def build_chain():
       FILENAME->[<file_name1>]::: CONTENT-> [<content1>] 
       FILENAME->[<file_name2>]::: CONTENT-> [<content2>]
       
-      Use the file name to add citation at the end of the answer in new line. Disregard any chunks that are not relevant to the user question. If the user question is not related to the documents, do not use any of the document chunks in your answer as well as citation. If the user question is not related to the documents, do not use any of the document chunks in your answer as well as citation.  
-      Beautify the response for better readability.
-      Sources should be cited in the format: "Sources: new line <file_name>" at the end of the answer. If multiple sources are used, separate them with new lines.
-
+      Disregard any chunks that are not relevant to the user question. If the user question is not related to the documents, do not use any of the document chunks in your answer as well as citation. 
+      Keep all the available chunks as part of retrieved_contexts, but avoid using irrelevant chunk in your answer or sources/citation.
       
       Constraints:
       You are to strictly allowed to answer questions based on the provided information as part of retrived context.
@@ -77,7 +76,7 @@ def build_chain():
             "question": RunnableLambda(lambda x:x["question"] ),
             "context":  RunnableLambda(lambda x: x["question"]) | RunnableLambda(retrieve_documents) |  RunnableLambda(combine_docs),
         }
-    )) | prompt | llm
+    )) | prompt | llm.with_structured_output(LLMOutput)
 
    
 

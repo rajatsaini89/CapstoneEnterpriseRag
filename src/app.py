@@ -78,11 +78,108 @@ def show_authenticated_page():
 	st.write(f"Hello, **{username}**. You are signed in successfully.")
 
 	if role == "admin":
-		st.header("Admin screen")
-		st.info("Welcome to the administrator area.")
-		st.write("Admin tools can be added here.")
+		show_evaluation_question_manager()
 	else:
 		show_chat_workspace(username)
+
+
+def show_evaluation_question_manager():
+	from utils.EvaluationQuestionUtility import EvaluationQuestionUtility
+
+	st.title("Evaluation questions")
+	st.caption("Create, update, and remove the questions used to evaluate the RAG system.")
+	question_utility = EvaluationQuestionUtility()
+	questions = question_utility.get_all()
+
+	with st.container(border=True):
+		st.subheader("Add a question")
+		with st.form("create_evaluation_question_form", clear_on_submit=True):
+			question = st.text_area("Question", placeholder="Enter the evaluation question")
+			ground_truth = st.text_area(
+				"Ground truth",
+				placeholder="Enter the expected answer",
+			)
+			create_submitted = st.form_submit_button(
+				"Add question",
+				type="primary",
+				icon=":material/add:",
+			)
+
+		if create_submitted:
+			if not question.strip() or not ground_truth.strip():
+				st.error("Question and ground truth are required.")
+			else:
+				question_utility.create(question.strip(), ground_truth.strip())
+				st.success("Evaluation question added.")
+				st.rerun()
+
+	if questions:
+		st.subheader("Manage existing questions")
+		question_options = {item["Id"]: item for item in questions}
+		selected_id = st.selectbox(
+			"Question",
+			options=list(question_options),
+			format_func=lambda question_id: (
+				f"{question_id}: {question_options[question_id]['Question']}"
+			),
+			key="selected_evaluation_question_id",
+		)
+		selected_question = question_options[selected_id]
+
+		with st.form("edit_evaluation_question_form"):
+			updated_question = st.text_area(
+				"Question text",
+				value=selected_question["Question"],
+				key=f"question_text_{selected_id}",
+			)
+			updated_ground_truth = st.text_area(
+				"Ground truth",
+				value=selected_question["Ground_truth"],
+				key=f"ground_truth_{selected_id}",
+			)
+			update_submitted = st.form_submit_button(
+				"Save changes",
+				type="primary",
+				icon=":material/save:",
+			)
+
+		if update_submitted:
+			if not updated_question.strip() or not updated_ground_truth.strip():
+				st.error("Question and ground truth are required.")
+			else:
+				question_utility.update(
+					selected_id,
+					updated_question.strip(),
+					updated_ground_truth.strip(),
+				)
+				st.success("Evaluation question updated.")
+				st.rerun()
+
+		with st.container(horizontal=True):
+			st.caption(f"Question ID: {selected_id}")
+			delete_submitted = st.button(
+				"Delete question",
+				icon=":material/delete:",
+				type="secondary",
+			)
+
+		if delete_submitted:
+			question_utility.delete(selected_id)
+			st.success("Evaluation question deleted.")
+			st.rerun()
+
+		st.subheader("All questions")
+		st.dataframe(
+			questions,
+			column_config={
+				"Id": st.column_config.NumberColumn("ID", width="small"),
+				"Question": st.column_config.TextColumn("Question", width="large"),
+				"Ground_truth": st.column_config.TextColumn("Ground truth", width="large"),
+			},
+			hide_index=True,
+		)
+	else:
+		st.info("No evaluation questions have been added yet.")
 
 
 def create_chat_session(username, session_count):
