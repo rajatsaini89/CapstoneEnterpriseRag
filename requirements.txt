@@ -30,3 +30,9 @@ sentence-transformers==3.1.1
 faiss-cpu
 rank-bm25
 numpy
+
+# Evaluation
+ragas>=0.2.0,<0.5.0
+datasets>=2.14.0
+pandas>=2.0.0
+
