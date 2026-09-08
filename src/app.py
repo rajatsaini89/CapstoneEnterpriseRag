@@ -78,18 +78,51 @@ def show_authenticated_page():
 	st.write(f"Hello, **{username}**. You are signed in successfully.")
 
 	if role == "admin":
-		show_evaluation_question_manager()
+		show_admin_workspace()
 	else:
 		show_chat_workspace(username)
 
 
-def show_evaluation_question_manager():
+def show_admin_workspace():
+	from utils.EvaluationQuestionUtility import EvaluationQuestionUtility
+
+	questions = EvaluationQuestionUtility().get_all()
+	if "admin_section" not in st.session_state:
+		st.session_state["admin_section"] = "evaluation"
+
+	with st.sidebar:
+		st.subheader("Admin")
+		if st.button(
+			"Evaluation dashboard",
+			key="evaluation_dashboard_tab",
+			type="primary" if st.session_state["admin_section"] == "evaluation" else "secondary",
+			icon=":material/monitoring:",
+			width="stretch",
+		):
+			st.session_state["admin_section"] = "evaluation"
+			st.rerun()
+		if st.button(
+			"Question management",
+			key="question_management_tab",
+			type="primary" if st.session_state["admin_section"] == "questions" else "secondary",
+			icon=":material/quiz:",
+			width="stretch",
+		):
+			st.session_state["admin_section"] = "questions"
+			st.rerun()
+
+	if st.session_state["admin_section"] == "evaluation":
+		show_llm_evaluation_dashboard(questions)
+	else:
+		show_evaluation_question_manager(questions)
+
+
+def show_evaluation_question_manager(questions):
 	from utils.EvaluationQuestionUtility import EvaluationQuestionUtility
 
 	st.title("Evaluation questions")
 	st.caption("Create, update, and remove the questions used to evaluate the RAG system.")
 	question_utility = EvaluationQuestionUtility()
-	questions = question_utility.get_all()
 
 	with st.container(border=True):
 		st.subheader("Add a question")
@@ -180,6 +213,92 @@ def show_evaluation_question_manager():
 		)
 	else:
 		st.info("No evaluation questions have been added yet.")
+
+
+def show_llm_evaluation_dashboard(questions):
+	"""Run the configured RAGAS evaluation and display its results for admins."""
+	with st.container(border=True):
+		st.subheader("LLM evaluation")
+		st.caption("Run the evaluation set against the current RAG pipeline and review its scores.")
+
+		run_evaluation = st.button(
+			"Run evaluation",
+			 type="primary",
+			 icon=":material/monitoring:",
+			 disabled=not questions,
+		)
+
+		if run_evaluation:
+			with st.spinner("Running RAGAS evaluation. This may take a few minutes..."):
+				try:
+					from modules.RagEvaluator import evaluateRag
+
+					st.session_state["llm_evaluation_results"] = evaluateRag()
+					st.session_state.pop("llm_evaluation_error", None)
+				except Exception as error:
+					st.session_state["llm_evaluation_error"] = str(error)
+					st.session_state.pop("llm_evaluation_results", None)
+
+		if not questions:
+			st.info("Add at least one evaluation question before running the evaluation.")
+			return
+
+		if st.session_state.get("llm_evaluation_error"):
+			st.error(
+				"The evaluation could not be completed: "
+				f"{st.session_state['llm_evaluation_error']}"
+			)
+
+		results = st.session_state.get("llm_evaluation_results")
+		if not results:
+			st.info("No evaluation run yet. Select 'Run evaluation' to generate a report.")
+			return
+
+		import pandas as pd
+
+		metric_columns = {
+			"faithfulness": "Faithfulness",
+			"response_relevancy": "Response relevancy",
+			"llm_context_precision_with_reference": "Context precision",
+			"llm_context_recall": "Context recall",
+		}
+		rows = [
+			{
+				"Question ID": result.question_id,
+				**{
+					label: getattr(result, field)
+					for field, label in metric_columns.items()
+				},
+			}
+			for result in results
+		]
+		results_df = pd.DataFrame(rows)
+		average_scores = results_df.drop(columns=["Question ID"]).mean(numeric_only=True)
+
+		with st.container(horizontal=True):
+			st.metric("Questions evaluated", len(results), border=True)
+			st.metric("Overall score", f"{average_scores.mean():.2f}", border=True)
+			st.metric("Faithfulness", f"{average_scores['Faithfulness']:.2f}", border=True)
+			st.metric("Response relevancy", f"{average_scores['Response relevancy']:.2f}", border=True)
+
+		chart_df = average_scores.rename("Average score").to_frame()
+		with st.container(border=True):
+			st.subheader("Average metric scores")
+			st.bar_chart(chart_df, y="Average score", x_label="Metric", y_label="Score")
+
+		with st.container(border=True):
+			st.subheader("Question-level results")
+			st.dataframe(
+				results_df,
+				column_config={
+					"Question ID": st.column_config.TextColumn("Question ID"),
+					**{
+						label: st.column_config.NumberColumn(label, format="%.2f")
+						for label in metric_columns.values()
+					},
+				},
+				hide_index=True,
+			)
 
 
 def create_chat_session(username, session_count):
