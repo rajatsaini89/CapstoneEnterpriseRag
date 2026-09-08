@@ -223,7 +223,12 @@ def get_structured_response_field(response, field, default=None):
 
 
 def show_response_sources(response):
-	sources = get_structured_response_field(response, "sources", []) or []
+	sources = get_structured_response_field(response, "sources")
+	if sources is None:
+		sources = getattr(response, "additional_kwargs", {}).get("sources", [])
+	if not sources:
+		return
+
 	if sources:
 		with st.expander("Sources"):
 			for source in sources:
@@ -278,6 +283,8 @@ def show_chat_workspace(username):
 		if message.type in ("human", "ai"):
 			with st.chat_message("user" if message.type == "human" else "assistant"):
 				st.markdown(get_message_text(message))
+				if message.type == "ai":
+					show_response_sources(message)
 
 	question = st.chat_input("Ask a question")
 	if question:
@@ -293,6 +300,9 @@ def show_chat_workspace(username):
 					)
 					st.markdown(get_message_text(response))
 					show_response_sources(response)
+					if history.messages and history.messages[-1].type == "ai":
+						sources = get_structured_response_field(response, "sources") or []
+						history.messages[-1].additional_kwargs["sources"] = sources
 					st.rerun()
 				except Exception as error:
 					st.error(f"Unable to get a response: {error}")
