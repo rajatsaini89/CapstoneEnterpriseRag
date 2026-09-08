@@ -3,12 +3,12 @@ streamlit
 # Langchain
 langchain==0.3.25
 langchain-community==0.3.24
-chromadb
+
 langchain-core==0.3.65
 langchain-text-splitters==0.3.8
 langchain-openai==0.3.18
 langchain-google-genai>=2.1.5
-langchain-pinecone==0.2.13
+
 
 
 # --- Google GenAI SDK ---
@@ -16,17 +16,14 @@ google-genai>=0.3.0
 
 
 # --- Document Loaders ---
-unstructured==0.15.14
 pypdf==5.1.0
 python-docx==1.1.2
-beautifulsoup4==4.12.3
-requests==2.32.3
+
 
 # --- Environment & Config ---
 python-dotenv==1.0.1
 
 
-sentence-transformers==3.1.1
 faiss-cpu
 rank-bm25
 numpy
