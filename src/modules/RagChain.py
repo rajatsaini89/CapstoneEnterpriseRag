@@ -66,7 +66,14 @@ def build_chain():
     def combine_docs(docs)->str:
         if not docs:
             return "No relevant documents retrieved."
-        return "\n\n".join(F' FILENAME->[{doc[0].metadata["FileName"].split("\\")[-1]}]::: CONTENT-> [{doc[0].page_content}] ' for doc in docs)
+        
+        formatted_docs = []
+        for doc in docs:
+            file_name = doc[0].metadata["FileName"].rsplit("\\", 1)[-1]
+            formatted_docs.append(
+                f" FILENAME->[{file_name}]::: CONTENT-> [{doc[0].page_content}] "
+            )
+        return "\n\n".join(formatted_docs)
 
     rag_chain=(RunnableParallel(
         {

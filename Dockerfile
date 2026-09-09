@@ -13,6 +13,8 @@ RUN pip install --upgrade pip --no-cache-dir --no-compile && \
 
 COPY config.json .
 COPY src ./src
+COPY evaluation_questions.db .
+COPY Docs /app/Docs
 
 EXPOSE 8501
 
