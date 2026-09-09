@@ -43,7 +43,7 @@ def get_embeddings_model(provider: str):
         raise ValueError(f"Unsupported provider: {provider}")
 
 
-def addDocsToVectorStore(  docs: List[Document]):
+def addDocsToVectorStore(docs: List[Document], forceRecreate: bool = False):
 
     store_type = config.getVectorStoreType().lower()
     provider = config.getEmbeddingProvider().lower()
@@ -54,7 +54,10 @@ def addDocsToVectorStore(  docs: List[Document]):
         print(f'Using persist dir: {persist_dir} for vectore store')
         os.makedirs(persist_dir, exist_ok=True)
 
-       
+        if forceRecreate and os.path.exists(persist_dir):
+            for file_path in (index_path, metadata_path):
+                if os.path.exists(file_path):
+                    os.remove(file_path)
 
         if os.path.exists(index_path):
             vectorestore = FAISS.load_local(persist_dir, embedding_model, allow_dangerous_deserialization=True)
