@@ -1,0 +1,117 @@
+AETHERIS DYNAMICS - IT AND SECURITY POLICIES
+==================================================
+
+
+INFORMATION TECHNOLOGY & CYBERSECURITY POLICY
+
+1. ACCEPTABLE USE
+Company IT resources, including networks, hardware, and software, are provided for business purposes. Occasional personal use is permitted provided it does not interfere with productivity, consume excessive bandwidth, or violate any laws.
+
+2. DEVICE ALLOCATION BY ROLE
+- Contractual Employees: Typically required to use standard company-issued Virtual Desktop Infrastructure (VDI) on personal devices (BYOD), or provided a baseline loaner laptop.
+- Associates: Provided a standard issue business laptop (Windows or Mac, based on department) and peripheral budget of $200.
+- Managers: Provided a high-performance laptop, corporate mobile phone, and a home-office setup stipend of $500.
+- Executives: Provided premium tier hardware, corporate mobile phone, iPad, and full home-office connectivity support.
+
+3. PASSWORD & AUTHENTICATION POLICY
+All accounts must be protected by a minimum 14-character passphrase. Multi-Factor Authentication (MFA) is strictly enforced across all Aetheris Dynamics portals. Passwords must be rotated every 90 days.
+
+4. DATA CLASSIFICATION AND HANDLING
+Employees must classify data as Public, Internal, Confidential, or Restricted. Confidential and Restricted data must never be stored on local unencrypted drives or transmitted via unauthorized third-party messaging apps (e.g., WhatsApp, personal Telegram).
+
+5. INCIDENT REPORTING
+If an employee suspects a phishing attempt, lost device, or data breach, they must contact the IT Service Desk within 1 hour of discovery. Do not attempt to investigate the breach independently.
+
+
+
+--- STANDARD CORPORATE CLAUSES (Part 1) ---
+
+SECTION A: SCOPE AND APPLICABILITY
+This document applies to all individuals working at Aetheris Dynamics, including Contractual Employees, Associates, Managers, and Executives. The policies detailed herein are designed to foster a safe, productive, and equitable work environment. All personnel are expected to read, understand, and adhere to the guidelines set forth. Failure to comply may result in disciplinary action, up to and including termination of employment or contract.
+
+The scope of this policy extends to all physical office locations, remote work environments, company-sponsored events, and any external interactions where an individual is representing Aetheris Dynamics. The management reserves the right to amend, modify, or revoke any part of this policy at its sole discretion, with or without prior notice, subject to applicable local, state, and federal laws.
+
+SECTION B: DEFINITIONS OF EMPLOYEE CATEGORIES
+1. Contractual Employees: Individuals hired for a specific duration or project. They are generally exempt from standard benefits unless otherwise specified in their contract.
+2. Associates: Full-time or part-time entry-to-mid level employees involved in day-to-day operational, technical, or administrative tasks.
+3. Managers: Employees responsible for supervising teams, managing departmental budgets, and executing strategic directives.
+4. Executives: C-suite leaders, Vice Presidents, and Senior Directors who guide the overall strategic vision and corporate governance of Aetheris Dynamics.
+
+SECTION C: COMPLIANCE, VIOLATIONS, AND DISCIPLINARY ACTIONS
+Strict compliance with this policy is mandatory. Aetheris Dynamics employs a zero-tolerance approach towards intentional violations of core company guidelines. Any suspected violation should be immediately reported to the Human Resources Department, the Compliance Officer, or via the anonymous corporate whistleblower hotline.
+
+Investigations into alleged violations will be conducted promptly, impartially, and confidentially. Disciplinary actions may include verbal warnings, written reprimands, performance improvement plans (PIPs), suspension without pay, or immediate termination. Contractual employees may face immediate termination of their contract without severance.
+
+SECTION D: POLICY ADMINISTRATION AND REVIEW
+The Human Resources and Legal Departments are jointly responsible for the administration, interpretation, and application of this policy. This policy will be reviewed on an annual basis to ensure alignment with evolving legal standards, industry best practices, and organizational goals.
+Any exceptions to this policy must be approved in writing by a C-level Executive and documented in the employee's personnel file. Employees who have questions regarding the interpretation of any clause within this document should proactively reach out to their HR Business Partner for clarification.
+
+
+--- STANDARD CORPORATE CLAUSES (Part 2) ---
+
+SECTION A: SCOPE AND APPLICABILITY
+This document applies to all individuals working at Aetheris Dynamics, including Contractual Employees, Associates, Managers, and Executives. The policies detailed herein are designed to foster a safe, productive, and equitable work environment. All personnel are expected to read, understand, and adhere to the guidelines set forth. Failure to comply may result in disciplinary action, up to and including termination of employment or contract.
+
+The scope of this policy extends to all physical office locations, remote work environments, company-sponsored events, and any external interactions where an individual is representing Aetheris Dynamics. The management reserves the right to amend, modify, or revoke any part of this policy at its sole discretion, with or without prior notice, subject to applicable local, state, and federal laws.
+
+SECTION B: DEFINITIONS OF EMPLOYEE CATEGORIES
+1. Contractual Employees: Individuals hired for a specific duration or project. They are generally exempt from standard benefits unless otherwise specified in their contract.
+2. Associates: Full-time or part-time entry-to-mid level employees involved in day-to-day operational, technical, or administrative tasks.
+3. Managers: Employees responsible for supervising teams, managing departmental budgets, and executing strategic directives.
+4. Executives: C-suite leaders, Vice Presidents, and Senior Directors who guide the overall strategic vision and corporate governance of Aetheris Dynamics.
+
+SECTION C: COMPLIANCE, VIOLATIONS, AND DISCIPLINARY ACTIONS
+Strict compliance with this policy is mandatory. Aetheris Dynamics employs a zero-tolerance approach towards intentional violations of core company guidelines. Any suspected violation should be immediately reported to the Human Resources Department, the Compliance Officer, or via the anonymous corporate whistleblower hotline.
+
+Investigations into alleged violations will be conducted promptly, impartially, and confidentially. Disciplinary actions may include verbal warnings, written reprimands, performance improvement plans (PIPs), suspension without pay, or immediate termination. Contractual employees may face immediate termination of their contract without severance.
+
+SECTION D: POLICY ADMINISTRATION AND REVIEW
+The Human Resources and Legal Departments are jointly responsible for the administration, interpretation, and application of this policy. This policy will be reviewed on an annual basis to ensure alignment with evolving legal standards, industry best practices, and organizational goals.
+Any exceptions to this policy must be approved in writing by a C-level Executive and documented in the employee's personnel file. Employees who have questions regarding the interpretation of any clause within this document should proactively reach out to their HR Business Partner for clarification.
+
+
+--- STANDARD CORPORATE CLAUSES (Part 3) ---
+
+SECTION A: SCOPE AND APPLICABILITY
+This document applies to all individuals working at Aetheris Dynamics, including Contractual Employees, Associates, Managers, and Executives. The policies detailed herein are designed to foster a safe, productive, and equitable work environment. All personnel are expected to read, understand, and adhere to the guidelines set forth. Failure to comply may result in disciplinary action, up to and including termination of employment or contract.
+
+The scope of this policy extends to all physical office locations, remote work environments, company-sponsored events, and any external interactions where an individual is representing Aetheris Dynamics. The management reserves the right to amend, modify, or revoke any part of this policy at its sole discretion, with or without prior notice, subject to applicable local, state, and federal laws.
+
+SECTION B: DEFINITIONS OF EMPLOYEE CATEGORIES
+1. Contractual Employees: Individuals hired for a specific duration or project. They are generally exempt from standard benefits unless otherwise specified in their contract.
+2. Associates: Full-time or part-time entry-to-mid level employees involved in day-to-day operational, technical, or administrative tasks.
+3. Managers: Employees responsible for supervising teams, managing departmental budgets, and executing strategic directives.
+4. Executives: C-suite leaders, Vice Presidents, and Senior Directors who guide the overall strategic vision and corporate governance of Aetheris Dynamics.
+
+SECTION C: COMPLIANCE, VIOLATIONS, AND DISCIPLINARY ACTIONS
+Strict compliance with this policy is mandatory. Aetheris Dynamics employs a zero-tolerance approach towards intentional violations of core company guidelines. Any suspected violation should be immediately reported to the Human Resources Department, the Compliance Officer, or via the anonymous corporate whistleblower hotline.
+
+Investigations into alleged violations will be conducted promptly, impartially, and confidentially. Disciplinary actions may include verbal warnings, written reprimands, performance improvement plans (PIPs), suspension without pay, or immediate termination. Contractual employees may face immediate termination of their contract without severance.
+
+SECTION D: POLICY ADMINISTRATION AND REVIEW
+The Human Resources and Legal Departments are jointly responsible for the administration, interpretation, and application of this policy. This policy will be reviewed on an annual basis to ensure alignment with evolving legal standards, industry best practices, and organizational goals.
+Any exceptions to this policy must be approved in writing by a C-level Executive and documented in the employee's personnel file. Employees who have questions regarding the interpretation of any clause within this document should proactively reach out to their HR Business Partner for clarification.
+
+
+--- STANDARD CORPORATE CLAUSES (Part 4) ---
+
+SECTION A: SCOPE AND APPLICABILITY
+This document applies to all individuals working at Aetheris Dynamics, including Contractual Employees, Associates, Managers, and Executives. The policies detailed herein are designed to foster a safe, productive, and equitable work environment. All personnel are expected to read, understand, and adhere to the guidelines set forth. Failure to comply may result in disciplinary action, up to and including termination of employment or contract.
+
+The scope of this policy extends to all physical office locations, remote work environments, company-sponsored events, and any external interactions where an individual is representing Aetheris Dynamics. The management reserves the right to amend, modify, or revoke any part of this policy at its sole discretion, with or without prior notice, subject to applicable local, state, and federal laws.
+
+SECTION B: DEFINITIONS OF EMPLOYEE CATEGORIES
+1. Contractual Employees: Individuals hired for a specific duration or project. They are generally exempt from standard benefits unless otherwise specified in their contract.
+2. Associates: Full-time or part-time entry-to-mid level employees involved in day-to-day operational, technical, or administrative tasks.
+3. Managers: Employees responsible for supervising teams, managing departmental budgets, and executing strategic directives.
+4. Executives: C-suite leaders, Vice Presidents, and Senior Directors who guide the overall strategic vision and corporate governance of Aetheris Dynamics.
+
+SECTION C: COMPLIANCE, VIOLATIONS, AND DISCIPLINARY ACTIONS
+Strict compliance with this policy is mandatory. Aetheris Dynamics employs a zero-tolerance approach towards intentional violations of core company guidelines. Any suspected violation should be immediately reported to the Human Resources Department, the Compliance Officer, or via the anonymous corporate whistleblower hotline.
+
+Investigations into alleged violations will be conducted promptly, impartially, and confidentially. Disciplinary actions may include verbal warnings, written reprimands, performance improvement plans (PIPs), suspension without pay, or immediate termination. Contractual employees may face immediate termination of their contract without severance.
+
+SECTION D: POLICY ADMINISTRATION AND REVIEW
+The Human Resources and Legal Departments are jointly responsible for the administration, interpretation, and application of this policy. This policy will be reviewed on an annual basis to ensure alignment with evolving legal standards, industry best practices, and organizational goals.
+Any exceptions to this policy must be approved in writing by a C-level Executive and documented in the employee's personnel file. Employees who have questions regarding the interpretation of any clause within this document should proactively reach out to their HR Business Partner for clarification.
+
