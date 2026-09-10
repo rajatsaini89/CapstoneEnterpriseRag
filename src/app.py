@@ -421,9 +421,10 @@ def show_llm_evaluation_dashboard(questions):
 
 		with st.container(horizontal=True):
 			st.metric("Questions evaluated", len(results), border=True)
-			st.metric("Overall score", f"{average_scores.mean():.2f}", border=True)
-			st.metric("Faithfulness", f"{average_scores['Faithfulness']:.2f}", border=True)
-			st.metric("Response relevancy", f"{average_scores['Response relevancy']:.2f}", border=True)
+			st.metric("Average Context Precision", f"{average_scores['Context precision']:.2f}", border=True)
+			st.metric("Average Context Recall", f"{average_scores['Context recall']:.2f}", border=True)
+			st.metric("Average Faithfulness", f"{average_scores['Faithfulness']:.2f}", border=True)
+			st.metric("Average Response Relevancy", f"{average_scores['Response relevancy']:.2f}", border=True)
 
 		chart_df = average_scores.rename("Average score").to_frame()
 		with st.container(border=True):
