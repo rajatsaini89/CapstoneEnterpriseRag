@@ -115,6 +115,9 @@ def evaluateRag():
     evaluation_results = [
         EvaluationResult(
             question_id=str(row["question_id"]),
+            question=str(row["user_input"]),
+            answer=str(row["response"]),
+            expected_answer=str(row["reference"]),
             faithfulness=float(row.get("faithfulness", nan)),
             answer_relevancy=float(row.get("answer_relevancy", nan)),
             response_relevancy=float(row.get("response_relevancy", nan)),

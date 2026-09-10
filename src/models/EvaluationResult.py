@@ -1,6 +1,9 @@
 class EvaluationResult:
-    def __init__(self, question_id: str, faithfulness: float, answer_relevancy: float, response_relevancy: float, llm_context_precision_with_reference: float, context_precision: float, context_recall: float, llm_context_recall: float):
+    def __init__(self, question_id: str, question: str, answer: str, expected_answer: str, faithfulness: float, answer_relevancy: float, response_relevancy: float, llm_context_precision_with_reference: float, context_precision: float, context_recall: float, llm_context_recall: float):
         self.question_id = question_id
+        self.question = question
+        self.answer = answer
+        self.expected_answer = expected_answer
         self.faithfulness = faithfulness
         self.answer_relevancy = answer_relevancy
         self.response_relevancy = response_relevancy

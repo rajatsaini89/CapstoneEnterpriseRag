@@ -406,6 +406,9 @@ def show_llm_evaluation_dashboard(questions):
 		rows = [
 			{
 				"Question ID": result.question_id,
+				"Question": result.question,
+				"Expected answer": result.expected_answer,
+				"LLM answer": result.answer,
 				**{
 					label: getattr(result, field)
 					for field, label in metric_columns.items()
@@ -429,10 +432,26 @@ def show_llm_evaluation_dashboard(questions):
 
 		with st.container(border=True):
 			st.subheader("Question-level results")
+			results_table = results_df.style.set_properties(
+				subset=["Question", "Expected answer", "LLM answer"],
+				**{"white-space": "pre-wrap", "word-wrap": "break-word"},
+			)
 			st.dataframe(
-				results_df,
+				results_table,
 				column_config={
 					"Question ID": st.column_config.TextColumn("Question ID"),
+					"Question": st.column_config.TextColumn(
+						"Question",
+						width="large",
+					),
+					"Expected answer": st.column_config.TextColumn(
+						"Expected answer",
+						width="large",
+					),
+					"LLM answer": st.column_config.TextColumn(
+						"LLM answer",
+						width="large",
+					),
 					**{
 						label: st.column_config.NumberColumn(label, format="%.2f")
 						for label in metric_columns.values()
