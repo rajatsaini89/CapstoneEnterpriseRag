@@ -1,15 +1,7 @@
 {
-    "embedding_provider": "openai",
-    "llm_provider": "openai",
-    "llm_model": "gpt-4o",
-    "llm_temperature": 0.3,
     "embedding_model": "text-embedding-3-small",
     "vector_store_dimention": 1536,
     "vector_store_type": "faiss",
-    "chunk_size": 500,
-    "min_chunk_size": 15,
-    "chunk_overlap": 75,
-    "chunk_top_k": 2,
     "retriver": {
         "type": "multi_query",    
         "top_k": 5,
@@ -26,11 +18,6 @@
         "k1": 1.5,
         "b": 0.75,
         "stopwords": [],
-        "top_k": 5
-    },
-    "hybridRetrieverConfig": {
-        "bm25_weight": 0.6,
-        "embedding_weight": 0.4,
         "top_k": 5
     }
 }

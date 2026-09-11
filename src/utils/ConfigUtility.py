@@ -6,23 +6,37 @@ import models.memoryProviderModel as memoryProviderModel
 import models.retrieverModel as retrieverModel
 import models.bm25Config as bm25Config
 import models.HybridConfigModel as hybridWeightModel
+from .ConfigDatabaseUtility import ConfigDatabaseUtility
 
 class ConfigUtility:
+    databaseConfigKeys = (
+        "embedding_provider",
+        "llm_provider",
+        "llm_model",
+        "llm_temperature",
+        "chunk_size",
+        "min_chunk_size",
+        "chunk_overlap",
+        "hybridRetrieverConfig",
+    )
+
     def __init__(self) -> None:
         self.configPath = Path(__file__).resolve().parents[2] / "config.json"
+        self.configDatabase = ConfigDatabaseUtility()
+        self.configDatabase.migrate_from_json(self.configPath, self.databaseConfigKeys)
 
     def readConfig(self) -> dict[str, Any]:
         with self.configPath.open("r", encoding="utf-8") as config_file:
             return json.load(config_file)
 
     def getEmbeddingProvider(self) -> str:
-        return self.readConfig()["embedding_provider"]
+        return self.configDatabase.get("embedding_provider")
 
     def getLLMProvider(self) -> str:
-        return self.readConfig()["llm_provider"]
+        return self.configDatabase.get("llm_provider")
 
     def getLLMModel(self) -> str:
-        return self.readConfig()["llm_model"]
+        return self.configDatabase.get("llm_model")
 
     def getEmbeddingModel(self) -> str:
         return self.readConfig()["embedding_model"]
@@ -37,19 +51,19 @@ class ConfigUtility:
         return self.readConfig().get("vector_store_type")
 
     def getChunkSize(self) -> int:
-        return self.readConfig().get("chunk_size",200)
+        return self.configDatabase.get("chunk_size")
 
     def getMinChunkSize(self) -> int:
-        return self.readConfig().get("min_chunk_size")
+        return self.configDatabase.get("min_chunk_size")
 
     def getChunkOverlap(self) -> int:
-        return self.readConfig().get("chunk_overlap",75)
+        return self.configDatabase.get("chunk_overlap")
 
     def getVectorStoreDimension(self) -> int:
         return self.readConfig().get("vector_store_dimention")
 
     def getLLMTemperature(self) -> float:
-        return self.readConfig().get("llm_temperature", 0.3)
+        return self.configDatabase.get("llm_temperature")
 
     def getRecentMemoryTopK(self) -> int:
         return self.readConfig().get("recent_memory_top_k", 2)
@@ -58,7 +72,9 @@ class ConfigUtility:
         return bm25Config.BM25Config(self.readConfig().get("bm25", {}))
 
     def getHybridWeightConfig(self) -> hybridWeightModel.HybridConfigModel:
-        return hybridWeightModel.HybridConfigModel(self.readConfig().get("hybridRetrieverConfig"))
+        return hybridWeightModel.HybridConfigModel(
+            self.configDatabase.get("hybridRetrieverConfig")
+        )
 
     def getRetrieverConfig(self) -> retrieverModel: 
         model:retrieverModel = retrieverModel.RetrieverModel(self.readConfig().get("retriver"))

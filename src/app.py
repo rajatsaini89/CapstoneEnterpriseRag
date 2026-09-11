@@ -119,13 +119,140 @@ def show_admin_workspace():
 		):
 			st.session_state["admin_section"] = "documents"
 			st.rerun()
+		if st.button(
+			"Configuration",
+			key="configuration_tab",
+			type="primary" if st.session_state["admin_section"] == "configuration" else "secondary",
+			icon=":material/tune:",
+			width="stretch",
+		):
+			st.session_state["admin_section"] = "configuration"
+			st.rerun()
 
 	if st.session_state["admin_section"] == "evaluation":
 		show_llm_evaluation_dashboard(questions)
 	elif st.session_state["admin_section"] == "questions":
 		show_evaluation_question_manager(questions)
-	else:
+	elif st.session_state["admin_section"] == "documents":
 		show_document_manager()
+	else:
+		show_configuration_manager()
+
+
+def show_configuration_manager():
+	from utils.ConfigUtility import ConfigUtility
+
+	config = ConfigUtility()
+	values = config.configDatabase.get_all()
+
+	st.title("Configuration")
+	st.caption("Manage the RAG pipeline settings used by the application.")
+
+	with st.container(border=True):
+		with st.form("configuration_form"):
+			st.subheader("Model settings")
+			embedding_provider = st.selectbox(
+				"Embedding provider",
+				options=["openai", "gemini"],
+				index=["openai", "gemini"].index(values["embedding_provider"]),
+			)
+			llm_provider = st.selectbox(
+				"LLM provider",
+				options=["openai", "gemini"],
+				index=["openai", "gemini"].index(values["llm_provider"]),
+			)
+			llm_model = st.text_input("LLM model", value=values["llm_model"])
+			llm_temperature = st.number_input(
+				"LLM temperature",
+				min_value=0.0,
+				max_value=2.0,
+				step=0.1,
+				value=float(values["llm_temperature"]),
+			)
+
+			st.subheader("Text splitting")
+			chunk_size = st.number_input(
+				"Chunk size",
+				min_value=1,
+				step=1,
+				value=int(values["chunk_size"]),
+			)
+			min_chunk_size = st.number_input(
+				"Minimum chunk size",
+				min_value=1,
+				step=1,
+				value=int(values["min_chunk_size"]),
+			)
+			chunk_overlap = st.number_input(
+				"Chunk overlap",
+				min_value=0,
+				step=1,
+				value=int(values["chunk_overlap"]),
+			)
+			st.subheader("Hybrid retriever")
+			hybrid_config = values["hybridRetrieverConfig"]
+			bm25_weight = st.number_input(
+				"BM25 weight",
+				min_value=0.0,
+				max_value=1.0,
+				step=0.05,
+				value=float(hybrid_config["bm25_weight"]),
+			)
+			embedding_weight = st.number_input(
+				"Embedding weight",
+				min_value=0.0,
+				max_value=1.0,
+				step=0.05,
+				value=float(hybrid_config["embedding_weight"]),
+			)
+			hybrid_top_k = st.number_input(
+				"Hybrid top K",
+				min_value=1,
+				step=1,
+				value=int(hybrid_config["top_k"]),
+			)
+
+			save_submitted = st.form_submit_button(
+				"Save configuration",
+				type="primary",
+				icon=":material/save:",
+			)
+
+	if not save_submitted:
+		return
+
+	if not llm_model.strip():
+		st.error("LLM model is required.")
+		return
+	if min_chunk_size > chunk_size:
+		st.error("Minimum chunk size cannot be larger than chunk size.")
+		return
+	if chunk_overlap >= chunk_size:
+		st.error("Chunk overlap must be smaller than chunk size.")
+		return
+	if abs(bm25_weight + embedding_weight - 1.0) > 1e-9:
+		st.error("BM25 and embedding weights must sum to 1.")
+		return
+
+	updated_values = {
+		"embedding_provider": embedding_provider,
+		"llm_provider": llm_provider,
+		"llm_model": llm_model.strip(),
+		"llm_temperature": llm_temperature,
+		"chunk_size": chunk_size,
+		"min_chunk_size": min_chunk_size,
+		"chunk_overlap": chunk_overlap,
+		"hybridRetrieverConfig": {
+			"bm25_weight": bm25_weight,
+			"embedding_weight": embedding_weight,
+			"top_k": hybrid_top_k,
+		},
+	}
+	for key, value in updated_values.items():
+		if not config.configDatabase.update(key, value):
+			config.configDatabase.create(key, value)
+	get_chat_chain.clear()
+	st.success("Configuration saved. New chat requests will use the updated settings.")
 
 
 def show_document_manager():
