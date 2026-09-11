@@ -7,6 +7,7 @@
     "vector_store_dimention": 1536,
     "vector_store_type": "faiss",
     "chunk_size": 500,
+    "min_chunk_size": 15,
     "chunk_overlap": 75,
     "chunk_top_k": 2,
     "retriver": {

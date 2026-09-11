@@ -39,6 +39,9 @@ class ConfigUtility:
     def getChunkSize(self) -> int:
         return self.readConfig().get("chunk_size",200)
 
+    def getMinChunkSize(self) -> int:
+        return self.readConfig().get("min_chunk_size")
+
     def getChunkOverlap(self) -> int:
         return self.readConfig().get("chunk_overlap",75)
 

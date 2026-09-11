@@ -110,11 +110,152 @@ def show_admin_workspace():
 		):
 			st.session_state["admin_section"] = "questions"
 			st.rerun()
+		if st.button(
+			"Manage documents",
+			key="document_upload_tab",
+			type="primary" if st.session_state["admin_section"] == "documents" else "secondary",
+			icon=":material/folder_managed:",
+			width="stretch",
+		):
+			st.session_state["admin_section"] = "documents"
+			st.rerun()
 
 	if st.session_state["admin_section"] == "evaluation":
 		show_llm_evaluation_dashboard(questions)
-	else:
+	elif st.session_state["admin_section"] == "questions":
 		show_evaluation_question_manager(questions)
+	else:
+		show_document_manager()
+
+
+def show_document_manager():
+	from modules.docReader import read_docx, read_pdf, read_txt
+	from modules.textSplitter import split_documents
+	from modules.VectorStore import addDocsToVectorStore
+	from utils.vectorStoreUtility import initializeVectorStore
+
+	docs_folder = Path(__file__).resolve().parents[1] / "Docs"
+
+	st.title("Manage documents")
+	st.caption("View, upload, and delete documents in the knowledge base.")
+
+	with st.container(border=True):
+		st.subheader("Documents in Docs")
+		if not docs_folder.exists():
+			st.info("The Docs folder does not contain any documents yet.")
+		else:
+			documents = sorted(
+				(path for path in docs_folder.iterdir() if path.is_file()),
+				key=lambda path: path.name.lower(),
+			)
+			if not documents:
+				st.warning("At least one document must be present in the Docs folder.")
+			else:
+				if len(documents) == 1:
+					st.info("At least one document must remain in the Docs folder, so the last document cannot be deleted.")
+				mime_types = {
+					".pdf": "application/pdf",
+					".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+					".txt": "text/plain",
+				}
+				for document_path in documents:
+					with st.container(horizontal=True, vertical_alignment="center"):
+						st.write(document_path.name)
+						st.caption(f"{document_path.stat().st_size:,} bytes")
+						st.download_button(
+							"Download",
+							data=document_path.read_bytes(),
+							file_name=document_path.name,
+							mime=mime_types.get(document_path.suffix.lower(), "application/octet-stream"),
+							key=f"download_document_{document_path.name}",
+							icon=":material/download:",
+						)
+						delete_submitted = st.button(
+							"Delete",
+							key=f"delete_document_{document_path.name}",
+							icon=":material/delete:",
+							disabled=len(documents) == 1,
+						)
+
+					if delete_submitted:
+						if len(documents) == 1:
+							st.error("At least one document must remain in the Docs folder.")
+							return
+						try:
+							document_path.unlink()
+							initializeVectorStore(forceRecreate=True)
+							get_chat_chain.clear()
+						except Exception as error:
+							st.error(f"The document could not be deleted: {error}")
+						else:
+							st.success(f"'{document_path.name}' was deleted.")
+							st.rerun()
+
+	with st.container(border=True):
+		st.subheader("Recreate vector store")
+		st.caption("Delete the current FAISS index and rebuild it from every document in Docs.")
+		recreate_submitted = st.button(
+			"Recreate vector store",
+			icon=":material/refresh:",
+		)
+
+	if recreate_submitted:
+		with st.spinner("Recreating vector store from documents in Docs..."):
+			try:
+				initializeVectorStore(forceRecreate=True)
+				get_chat_chain.clear()
+			except Exception as error:
+				st.error(f"The vector store could not be recreated: {error}")
+			else:
+				st.success("The vector store was recreated from the documents in Docs.")
+
+	with st.container(border=True):
+		uploaded_file = st.file_uploader(
+			"Choose a document",
+			type=["pdf", "docx", "txt"],
+			key="knowledge_base_upload",
+		)
+		add_submitted = st.button(
+			"Add to knowledge base",
+			type="primary",
+			icon=":material/upload_file:",
+			disabled=uploaded_file is None,
+		)
+
+	if not add_submitted or uploaded_file is None:
+		return
+
+	file_name = Path(uploaded_file.name).name
+	file_path = docs_folder / file_name
+	if file_path.exists():
+		st.error(f"A document named '{file_name}' already exists in Docs.")
+		return
+
+	docs_folder.mkdir(parents=True, exist_ok=True)
+	file_path.write_bytes(uploaded_file.getvalue())
+
+	try:
+		suffix = file_path.suffix.lower()
+		if suffix == ".pdf":
+			documents = read_pdf(str(file_path))
+		elif suffix == ".docx":
+			documents = read_docx(str(file_path))
+		else:
+			documents = read_txt(str(file_path))
+
+		if not documents:
+			file_path.unlink()
+			st.error("The uploaded document did not contain any readable text.")
+			return
+
+		addDocsToVectorStore(split_documents(documents))
+		get_chat_chain.clear()
+	except Exception as error:
+		file_path.unlink(missing_ok=True)
+		st.error(f"The document could not be added: {error}")
+		return
+
+	st.success(f"'{file_name}' was added to Docs and the vector store.")
 
 
 def show_evaluation_question_manager(questions):
@@ -265,6 +406,9 @@ def show_llm_evaluation_dashboard(questions):
 		rows = [
 			{
 				"Question ID": result.question_id,
+				"Question": result.question,
+				"Expected answer": result.expected_answer,
+				"LLM answer": result.answer,
 				**{
 					label: getattr(result, field)
 					for field, label in metric_columns.items()
@@ -277,9 +421,10 @@ def show_llm_evaluation_dashboard(questions):
 
 		with st.container(horizontal=True):
 			st.metric("Questions evaluated", len(results), border=True)
-			st.metric("Overall score", f"{average_scores.mean():.2f}", border=True)
-			st.metric("Faithfulness", f"{average_scores['Faithfulness']:.2f}", border=True)
-			st.metric("Response relevancy", f"{average_scores['Response relevancy']:.2f}", border=True)
+			st.metric("Average Context Precision", f"{average_scores['Context precision']:.2f}", border=True)
+			st.metric("Average Context Recall", f"{average_scores['Context recall']:.2f}", border=True)
+			st.metric("Average Faithfulness", f"{average_scores['Faithfulness']:.2f}", border=True)
+			st.metric("Average Response Relevancy", f"{average_scores['Response relevancy']:.2f}", border=True)
 
 		chart_df = average_scores.rename("Average score").to_frame()
 		with st.container(border=True):
@@ -288,10 +433,26 @@ def show_llm_evaluation_dashboard(questions):
 
 		with st.container(border=True):
 			st.subheader("Question-level results")
+			results_table = results_df.style.set_properties(
+				subset=["Question", "Expected answer", "LLM answer"],
+				**{"white-space": "pre-wrap", "word-wrap": "break-word"},
+			)
 			st.dataframe(
-				results_df,
+				results_table,
 				column_config={
 					"Question ID": st.column_config.TextColumn("Question ID"),
+					"Question": st.column_config.TextColumn(
+						"Question",
+						width="large",
+					),
+					"Expected answer": st.column_config.TextColumn(
+						"Expected answer",
+						width="large",
+					),
+					"LLM answer": st.column_config.TextColumn(
+						"LLM answer",
+						width="large",
+					),
 					**{
 						label: st.column_config.NumberColumn(label, format="%.2f")
 						for label in metric_columns.values()

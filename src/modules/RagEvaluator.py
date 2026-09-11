@@ -115,15 +115,22 @@ def evaluateRag():
     evaluation_results = [
         EvaluationResult(
             question_id=str(row["question_id"]),
+            question=str(row["user_input"]),
+            answer=str(row["response"]),
+            expected_answer=str(row["reference"]),
             faithfulness=float(row.get("faithfulness", nan)),
             answer_relevancy=float(row.get("answer_relevancy", nan)),
-            response_relevancy=float(row.get("response_relevancy", nan)),
+            response_relevancy=float(
+                row.get("response_relevancy", row.get("answer_relevancy", nan))
+            ),
             llm_context_precision_with_reference=float(
                 row.get("llm_context_precision_with_reference", nan)
             ),
             context_precision=float(row.get("context_precision", nan)),
             context_recall=float(row.get("context_recall", nan)),
-            llm_context_recall=float(row.get("llm_context_recall", nan)),
+            llm_context_recall=float(
+                row.get("llm_context_recall", row.get("context_recall", nan))
+            ),
         )
         for _, row in df.iterrows()
     ]
