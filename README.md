@@ -44,7 +44,7 @@ The RAG pipeline combines FAISS vector retrieval and BM25 keyword retrieval. The
 
 <!-- Screenshot placeholder: Add a screenshot of the user chat workspace here. -->
 
-![User chat workspace screenshot](/screenshots/UserChatInterface.jpg)
+![User chat workspace screenshot](/ScreenShots/UserChatInterface.jpg)
 
 ## Architecture Diagram
 
@@ -150,9 +150,7 @@ flowchart TD
 
 The application also creates or uses `evaluation_questions.db` in the project root for configuration and evaluation-question data. The database is initialized or migrated from `config.json` when the application starts.
 
-<!-- Screenshot placeholder: Add a screenshot of the project directory or repository structure here. -->
 
-![Project structure screenshot](docs/screenshots/project-structure.png)
 
 ## Setup Instructions
 
@@ -251,17 +249,17 @@ When documents are added or configuration values are changed, use the relevant a
 
 <!-- Screenshot placeholder: Add a screenshot of the login screen here. -->
 
-![Login screenshot](Screenshots/LoginScreen.png)
+![Login screenshot](/ScreenShots/LoginScreen.png)
 
 <!-- Screenshot placeholder: Add a screenshot of the admin evaluation dashboard here. -->
 
-![Evaluation dashboard screenshot](Screenshots/Evaluation1.png)
-![Evaluation dashboard screenshot](Screenshots/Evaluation2.png)
+![Evaluation dashboard screenshot](/ScreenShots/Evaluation1.png)
+![Evaluation dashboard screenshot](/ScreenShots/Evaluation2.png)
 
 <!-- Screenshot placeholder: Add a screenshot of document management here. -->
 
-![Document management screenshot](Screenshots/ManageDocs.png)
+![Document management screenshot](/ScreenShots/ManageDocs.png)
 
 <!-- Screenshot placeholder: Add a screenshot of configuration management here. -->
 
-![Configuration screenshot](Screenshots/configuration.png)
+![Configuration screenshot](/ScreenShots/configuration.png)
