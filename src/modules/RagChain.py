@@ -9,18 +9,32 @@ from modules.HybridRetriever import retrieve_documents
 
 
 def build_chain():
-    config = ConfigUtility()
-    
-    llm_provider = config.getLLMProvider().lower()
-    llm_model = config.getLLMModel()
-    llm_temperature = config.getLLMTemperature()
+    try:
+        config = ConfigUtility()
+        llm_provider = config.getLLMProvider().lower()
+        llm_model = config.getLLMModel()
+        llm_temperature = config.getLLMTemperature()
 
-    print(f"Building chain with LLM provider: {llm_provider}, model: {llm_model}")
+        print(f"Building chain with LLM provider: {llm_provider}, model: {llm_model}")
 
-    if llm_provider == "openai":
-        llm = ChatOpenAI(model_name=llm_model, temperature=llm_temperature , api_key=config.getOpenAIKey())
-    elif llm_provider in ["google", "gemini"]:
-        llm = ChatGoogleGenerativeAI(model_name=llm_model, temperature=llm_temperature, google_api_key=config.getGeminiKey())
+        if llm_provider == "openai":
+            llm = ChatOpenAI(
+                model_name=llm_model,
+                temperature=llm_temperature,
+                api_key=config.getOpenAIKey(),
+            )
+        elif llm_provider in ["google", "gemini"]:
+            llm = ChatGoogleGenerativeAI(
+                model_name=llm_model,
+                temperature=llm_temperature,
+                google_api_key=config.getGeminiKey(),
+            )
+        else:
+            raise ValueError(f"Unsupported LLM provider: {llm_provider}")
+    except ValueError:
+        raise
+    except Exception as error:
+        raise RuntimeError("Unable to initialize the configured language model") from error
 
     system_prompt = """
     You are a helpful RAG (Retrieval-Augmented Generation) assistant for a well known enterprise organization.
@@ -66,24 +80,46 @@ def build_chain():
     def combine_docs(docs)->str:
         if not docs:
             return "No relevant documents retrieved."
-        
-        formatted_docs = []
-        for doc in docs:
-            file_name = doc[0].metadata["FileName"].rsplit("\\", 1)[-1]
-            formatted_docs.append(
-                f" FILENAME->[{file_name}]::: CONTENT-> [{doc[0].page_content}] "
-            )
-        return "\n\n".join(formatted_docs)
 
-    rag_chain=(RunnableParallel(
-        {
-            "system_prompt" : RunnableLambda(lambda _:system_prompt),
-            "memory_summary": RunnableLambda(lambda x: getMemorySummary(x["session_id"]) ),
-            "recent_memory": RunnableLambda(lambda x: getRecentContext(x["session_id"]) ),
-            "question": RunnableLambda(lambda x:x["question"] ),
-            "context":  RunnableLambda(lambda x: x["question"]) | RunnableLambda(retrieve_documents) |  RunnableLambda(combine_docs),
-        }
-    )) | prompt | llm.with_structured_output(LLMOutput)
+        try:
+            formatted_docs = []
+            for doc, _ in docs:
+                file_name = doc.metadata.get("FileName", "Unknown file")
+                formatted_docs.append(
+                    f" FILENAME->[{file_name}]::: CONTENT-> [{doc.page_content}] "
+                )
+            return "\n\n".join(formatted_docs)
+        except Exception as error:
+            raise RuntimeError("Unable to format retrieved documents for the prompt") from error
+
+    def get_input_value(input_data, key: str):
+        if not isinstance(input_data, dict):
+            raise ValueError("RAG chain input must be a mapping")
+        value = input_data.get(key)
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"RAG chain input must contain a non-empty '{key}'")
+        return value
+
+    try:
+        rag_chain = (RunnableParallel(
+            {
+                "system_prompt": RunnableLambda(lambda _: system_prompt),
+                "memory_summary": RunnableLambda(
+                    lambda x: getMemorySummary(get_input_value(x, "session_id"))
+                ),
+                "recent_memory": RunnableLambda(
+                    lambda x: getRecentContext(get_input_value(x, "session_id"))
+                ),
+                "question": RunnableLambda(lambda x: get_input_value(x, "question")),
+                "context": RunnableLambda(
+                    lambda x: get_input_value(x, "question")
+                )
+                | RunnableLambda(retrieve_documents)
+                | RunnableLambda(combine_docs),
+            }
+        )) | prompt | llm.with_structured_output(LLMOutput)
+    except Exception as error:
+        raise RuntimeError("Unable to assemble the RAG processing chain") from error
 
    
 

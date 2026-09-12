@@ -5,20 +5,32 @@ import pypdf
 import docx
 
 def load_all_docs(folder_path: str) -> list[Document]:
-    print(f"Loading documents from folder: {folder_path}")
-    docs = []
-    
-    for file in os.listdir(folder_path):
-        path = os.path.join(folder_path, file)
+    folder = Path(folder_path)
+    if not folder.exists():
+        raise FileNotFoundError(f"Document folder does not exist: {folder_path}")
+    if not folder.is_dir():
+        raise NotADirectoryError(f"Document path is not a folder: {folder_path}")
 
-        if file.lower().endswith('.pdf'):
-            docs.extend(read_pdf(path))
-        elif file.lower().endswith('.docx'):
-            docs.extend(read_docx(path))
-        elif file.lower().endswith('.txt'):
-            docs.extend(read_txt(path))
+    try:
+        print(f"Loading documents from folder: {folder_path}")
+        docs = []
 
-    return docs
+        for path in folder.iterdir():
+            if not path.is_file():
+                continue
+
+            if path.suffix.lower() == ".pdf":
+                docs.extend(read_pdf(str(path)))
+            elif path.suffix.lower() == ".docx":
+                docs.extend(read_docx(str(path)))
+            elif path.suffix.lower() == ".txt":
+                docs.extend(read_txt(str(path)))
+
+        return docs
+    except Exception as error:
+        raise RuntimeError(
+            f"Unable to load documents from folder '{folder_path}': {error}"
+        ) from error
 
 
 def read_pdf(file_path: str) -> list[Document]:
@@ -30,14 +42,26 @@ def read_pdf(file_path: str) -> list[Document]:
 
     """
 
-    reader = pypdf.PdfReader(file_path)
-    documents = []
-    for i , page in enumerate(reader.pages):
-        text = page.extract_text()
-        if text:
-            documents.append(Document(page_content=text, metadata={"page": i + 1, "FileName": file_path.split("/")[-1]}))
+    path = Path(file_path)
+    if not path.is_file():
+        raise FileNotFoundError(f"PDF file does not exist: {file_path}")
 
-    return documents
+    try:
+        reader = pypdf.PdfReader(str(path))
+        documents = []
+        for i, page in enumerate(reader.pages):
+            text = page.extract_text()
+            if text:
+                documents.append(
+                    Document(
+                        page_content=text,
+                        metadata={"page": i + 1, "FileName": path.name},
+                    )
+                )
+
+        return documents
+    except Exception as error:
+        raise RuntimeError(f"Unable to read PDF file '{file_path}'") from error
 
 def read_docx(file_path: str) -> list[Document]:
     """
@@ -48,14 +72,26 @@ def read_docx(file_path: str) -> list[Document]:
 
     """
 
-    doc = docx.Document(file_path)
-    documents = []
-    for i, paragraph in enumerate(doc.paragraphs):
-        text = paragraph.text
-        if text:
-            documents.append(Document(page_content=text, metadata={"paragraph": i + 1, "FileName": file_path.split("/")[-1]}))
+    path = Path(file_path)
+    if not path.is_file():
+        raise FileNotFoundError(f"DOCX file does not exist: {file_path}")
 
-    return documents
+    try:
+        doc = docx.Document(str(path))
+        documents = []
+        for i, paragraph in enumerate(doc.paragraphs):
+            text = paragraph.text
+            if text:
+                documents.append(
+                    Document(
+                        page_content=text,
+                        metadata={"paragraph": i + 1, "FileName": path.name},
+                    )
+                )
+
+        return documents
+    except Exception as error:
+        raise RuntimeError(f"Unable to read DOCX file '{file_path}'") from error
 
 
 def read_txt(file_path: str) -> list[Document]:
@@ -67,10 +103,17 @@ def read_txt(file_path: str) -> list[Document]:
 
     """
 
-    with open(file_path, "r", encoding="utf-8") as text_file:
-        text = text_file.read()
+    path = Path(file_path)
+    if not path.is_file():
+        raise FileNotFoundError(f"Text file does not exist: {file_path}")
 
-    if not text:
-        return []
+    try:
+        with path.open("r", encoding="utf-8") as text_file:
+            text = text_file.read()
 
-    return [Document(page_content=text, metadata={"FileName": os.path.basename(file_path)})]
+        if not text:
+            return []
+
+        return [Document(page_content=text, metadata={"FileName": path.name})]
+    except Exception as error:
+        raise RuntimeError(f"Unable to read text file '{file_path}'") from error
