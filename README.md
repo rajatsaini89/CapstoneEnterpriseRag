@@ -1,10 +1,10 @@
 # Enterprise Knowledge Assistant
 
-## Project Title
+## Aetheris Dynamics
 
 **Enterprise Knowledge Assistant**
 
-Enterprise Knowledge Assistant is an advanced Retrieval-Augmented Generation (RAG) application built around a fictional company called **Aetheris**. It demonstrates document ingestion, hybrid retrieval, conversational memory, role-based access, configurable RAG settings, and automated RAG evaluation.
+Enterprise Knowledge Assistant is an advanced Retrieval-Augmented Generation (RAG) application built around a fictional company called **Aetheris Dynamics**. It demonstrates document ingestion, hybrid retrieval, conversational memory, role-based access, configurable RAG settings, and automated RAG evaluation.
 
 ## Problem Statement
 
@@ -12,7 +12,7 @@ Enterprise information is often distributed across policies, FAQs, and other int
 
 The application addresses this problem by:
 
-- Loading and indexing Aetheris knowledge documents.
+- Loading and indexing Aetheris Dynamics knowledge documents.
 - Retrieving relevant content using both semantic and keyword search.
 - Using conversational memory to maintain context across chat sessions.
 - Showing document sources used to generate an answer.
@@ -27,7 +27,7 @@ The application provides separate experiences for two types of users:
 - Signs in through the application login screen.
 - Starts, switches between, and deletes chat sessions.
 - Asks questions through a conversational chat interface.
-- Receives answers grounded in the indexed Aetheris documents.
+- Receives answers grounded in the indexed Aetheris Dynamics documents.
 - Benefits from a conversation summary and the most recent chat turns.
 - Can inspect the sources associated with assistant responses.
 
@@ -44,7 +44,7 @@ The RAG pipeline combines FAISS vector retrieval and BM25 keyword retrieval. The
 
 <!-- Screenshot placeholder: Add a screenshot of the user chat workspace here. -->
 
-![User chat workspace screenshot](docs/screenshots/user-chat-workspace.png)
+![User chat workspace screenshot](/screenshots/UserChatInterface.jpg)
 
 ## Architecture Diagram
 
@@ -95,7 +95,7 @@ flowchart TD
 
 <!-- Screenshot placeholder: Add an architecture or system overview screenshot here if available. -->
 
-![Architecture overview screenshot](docs/screenshots/architecture-overview.png)
+
 
 ## Technology Stack
 
@@ -124,7 +124,7 @@ flowchart TD
 ├── config.py                   # Reserved configuration module
 ├── Dockerfile                  # Container build and Streamlit startup configuration
 ├── requirements.txt            # Python dependencies
-├── Docs/                       # Aetheris source documents used by the RAG pipeline
+├── Docs/                       # Aetheris Dynamics source documents used by the RAG pipeline
 ├── read.md                     # Project documentation
 └── src/
     ├── app.py                  # Streamlit entry point, login, user, and admin workspaces
@@ -251,16 +251,17 @@ When documents are added or configuration values are changed, use the relevant a
 
 <!-- Screenshot placeholder: Add a screenshot of the login screen here. -->
 
-![Login screenshot](docs/screenshots/login.png)
+![Login screenshot](Screenshots/LoginScreen.png)
 
 <!-- Screenshot placeholder: Add a screenshot of the admin evaluation dashboard here. -->
 
-![Evaluation dashboard screenshot](docs/screenshots/evaluation-dashboard.png)
+![Evaluation dashboard screenshot](Screenshots/Evaluation1.png)
+![Evaluation dashboard screenshot](Screenshots/Evaluation2.png)
 
 <!-- Screenshot placeholder: Add a screenshot of document management here. -->
 
-![Document management screenshot](docs/screenshots/document-management.png)
+![Document management screenshot](Screenshots/ManageDocs.png)
 
 <!-- Screenshot placeholder: Add a screenshot of configuration management here. -->
 
-![Configuration screenshot](docs/screenshots/configuration.png)
+![Configuration screenshot](Screenshots/configuration.png)
