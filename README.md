@@ -254,7 +254,7 @@ When documents are added or configuration values are changed, use the relevant a
 <!-- Screenshot placeholder: Add a screenshot of the admin evaluation dashboard here. -->
 
 ![Evaluation dashboard screenshot1](/ScreenShots/Evaluation1.jpg)
-![Evaluation dashboard screenshot2](/ScreenShots/Evaluation2.jpg)
+
 
 <!-- Screenshot placeholder: Add a screenshot of document management here. -->
 
