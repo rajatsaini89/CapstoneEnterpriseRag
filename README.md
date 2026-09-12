@@ -249,17 +249,17 @@ When documents are added or configuration values are changed, use the relevant a
 
 <!-- Screenshot placeholder: Add a screenshot of the login screen here. -->
 
-![Login screenshot](/ScreenShots/LoginScreen.png)
+![Login screenshot](/ScreenShots/LoginScreen.jpg)
 
 <!-- Screenshot placeholder: Add a screenshot of the admin evaluation dashboard here. -->
 
-![Evaluation dashboard screenshot](/ScreenShots/Evaluation1.png)
-![Evaluation dashboard screenshot](/ScreenShots/Evaluation2.png)
+![Evaluation dashboard screenshot1](/ScreenShots/Evaluation1.jpg)
+![Evaluation dashboard screenshot2](/ScreenShots/Evaluation2.jpg)
 
 <!-- Screenshot placeholder: Add a screenshot of document management here. -->
 
-![Document management screenshot](/ScreenShots/ManageDocs.png)
+![Document management screenshot](/ScreenShots/ManageDocs.jpg)
 
 <!-- Screenshot placeholder: Add a screenshot of configuration management here. -->
 
-![Configuration screenshot](/ScreenShots/configuration.png)
+![Configuration screenshot](/ScreenShots/configuration.jpg)
