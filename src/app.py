@@ -14,6 +14,26 @@ if str(SRC_DIR) not in sys.path:
 	sys.path.insert(0, str(SRC_DIR))
 
 
+def get_error_message(error):
+	"""Return the most useful user-facing message from a module exception."""
+	message = str(error).strip()
+	if message:
+		return message
+
+	cause = error.__cause__
+	while cause:
+		message = str(cause).strip()
+		if message:
+			return message
+		cause = cause.__cause__
+
+	return "An unexpected error occurred."
+
+
+def show_operation_error(operation, error):
+	st.error(f"{operation}: {get_error_message(error)}")
+
+
 def load_users():
 	"""Load users from username|password|role records."""
 	
@@ -86,7 +106,11 @@ def show_authenticated_page():
 def show_admin_workspace():
 	from utils.EvaluationQuestionUtility import EvaluationQuestionUtility
 
-	questions = EvaluationQuestionUtility().get_all()
+	try:
+		questions = EvaluationQuestionUtility().get_all()
+	except Exception as error:
+		show_operation_error("The evaluation questions could not be loaded", error)
+		return
 	if "admin_section" not in st.session_state:
 		st.session_state["admin_section"] = "evaluation"
 
@@ -142,8 +166,12 @@ def show_admin_workspace():
 def show_configuration_manager():
 	from utils.ConfigUtility import ConfigUtility
 
-	config = ConfigUtility()
-	values = config.configDatabase.get_all()
+	try:
+		config = ConfigUtility()
+		values = config.configDatabase.get_all()
+	except Exception as error:
+		show_operation_error("The configuration could not be loaded", error)
+		return
 
 	st.title("Configuration")
 	st.caption("Manage the RAG pipeline settings used by the application.")
@@ -249,8 +277,12 @@ def show_configuration_manager():
 		},
 	}
 	for key, value in updated_values.items():
-		if not config.configDatabase.update(key, value):
-			config.configDatabase.create(key, value)
+		try:
+			if not config.configDatabase.update(key, value):
+				config.configDatabase.create(key, value)
+		except Exception as error:
+			show_operation_error("The configuration could not be saved", error)
+			return
 	get_chat_chain.clear()
 	st.success("Configuration saved. New chat requests will use the updated settings.")
 
@@ -313,7 +345,7 @@ def show_document_manager():
 							initializeVectorStore(forceRecreate=True)
 							get_chat_chain.clear()
 						except Exception as error:
-							st.error(f"The document could not be deleted: {error}")
+							show_operation_error("The document could not be deleted", error)
 						else:
 							st.success(f"'{document_path.name}' was deleted.")
 							st.rerun()
@@ -332,7 +364,7 @@ def show_document_manager():
 				initializeVectorStore(forceRecreate=True)
 				get_chat_chain.clear()
 			except Exception as error:
-				st.error(f"The vector store could not be recreated: {error}")
+				show_operation_error("The vector store could not be recreated", error)
 			else:
 				st.success("The vector store was recreated from the documents in Docs.")
 
@@ -379,7 +411,7 @@ def show_document_manager():
 		get_chat_chain.clear()
 	except Exception as error:
 		file_path.unlink(missing_ok=True)
-		st.error(f"The document could not be added: {error}")
+		show_operation_error("The document could not be added", error)
 		return
 
 	st.success(f"'{file_name}' was added to Docs and the vector store.")
@@ -410,7 +442,11 @@ def show_evaluation_question_manager(questions):
 			if not question.strip() or not ground_truth.strip():
 				st.error("Question and ground truth are required.")
 			else:
-				question_utility.create(question.strip(), ground_truth.strip())
+				try:
+					question_utility.create(question.strip(), ground_truth.strip())
+				except Exception as error:
+					show_operation_error("The evaluation question could not be added", error)
+					return
 				st.success("Evaluation question added.")
 				st.rerun()
 
@@ -448,11 +484,18 @@ def show_evaluation_question_manager(questions):
 			if not updated_question.strip() or not updated_ground_truth.strip():
 				st.error("Question and ground truth are required.")
 			else:
-				question_utility.update(
-					selected_id,
-					updated_question.strip(),
-					updated_ground_truth.strip(),
-				)
+				try:
+					updated = question_utility.update(
+						selected_id,
+						updated_question.strip(),
+						updated_ground_truth.strip(),
+					)
+				except Exception as error:
+					show_operation_error("The evaluation question could not be updated", error)
+					return
+				if not updated:
+					st.error("The selected evaluation question no longer exists.")
+					return
 				st.success("Evaluation question updated.")
 				st.rerun()
 
@@ -465,7 +508,14 @@ def show_evaluation_question_manager(questions):
 			)
 
 		if delete_submitted:
-			question_utility.delete(selected_id)
+			try:
+				deleted = question_utility.delete(selected_id)
+			except Exception as error:
+				show_operation_error("The evaluation question could not be deleted", error)
+				return
+			if not deleted:
+				st.error("The selected evaluation question no longer exists.")
+				return
 			st.success("Evaluation question deleted.")
 			st.rerun()
 
@@ -512,9 +562,9 @@ def show_llm_evaluation_dashboard(questions):
 			return
 
 		if st.session_state.get("llm_evaluation_error"):
-			st.error(
-				"The evaluation could not be completed: "
-				f"{st.session_state['llm_evaluation_error']}"
+			show_operation_error(
+				"The evaluation could not be completed",
+				RuntimeError(st.session_state["llm_evaluation_error"]),
 			)
 
 		results = st.session_state.get("llm_evaluation_results")
@@ -654,7 +704,7 @@ def show_chat_workspace(username):
 
 	with st.sidebar:
 		st.subheader("Your chats")
-		if st.button("+ New chat", use_container_width=True):
+		if st.button("+ New chat", width="stretch"):
 			new_session = create_chat_session(username, len(sessions))
 			sessions.append(new_session)
 			st.session_state[f"active_chat_{username}"] = new_session["id"]
@@ -674,8 +724,12 @@ def show_chat_workspace(username):
 
 		if st.button("Delete chat", icon=":material/delete:"):
 			deleted_id = selected_session["id"]
+			try:
+				delete_session_memory(deleted_id)
+			except Exception as error:
+				show_operation_error("The chat could not be deleted", error)
+				return
 			sessions[:] = [session for session in sessions if session["id"] != deleted_id]
-			delete_session_memory(deleted_id)
 
 			if not sessions:
 				sessions.append(create_chat_session(username, 0))
@@ -685,7 +739,11 @@ def show_chat_workspace(username):
 	st.header(selected_session["name"])
 	st.caption(f"Signed in as {username}")
 
-	history = get_session_message_history(selected_session["id"])
+	try:
+		history = get_session_message_history(selected_session["id"])
+	except Exception as error:
+		show_operation_error("Chat history could not be loaded", error)
+		return
 	for message in history.messages:
 		if message.type in ("human", "ai"):
 			with st.chat_message("user" if message.type == "human" else "assistant"):
@@ -712,7 +770,7 @@ def show_chat_workspace(username):
 						history.messages[-1].additional_kwargs["sources"] = sources
 					st.rerun()
 				except Exception as error:
-					st.error(f"Unable to get a response: {error}")
+					show_operation_error("Unable to get a response", error)
 
 
 def main():
